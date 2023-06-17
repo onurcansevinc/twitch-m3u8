@@ -2,7 +2,7 @@ const https = require('https');
 
 const clientId = "kimne78kx3ncx6brgo4mv6wki5h1ko";
 
-function getAccessToken(id, isVod) {
+function getAccessToken(id, OAuth, isVod) {
 	const data = JSON.stringify({
 		operationName: "PlaybackAccessToken",
 		extensions: {
@@ -26,7 +26,8 @@ function getAccessToken(id, isVod) {
 		path: '/gql',
 		method: 'POST',
 		headers: {
-			'Client-id': clientId
+			'Client-id': clientId,
+			'Authorization': `OAuth ${OAuth}`
 		}
 	};
 
@@ -99,9 +100,9 @@ function parsePlaylist(playlist) {
 	return parsedPlaylist;
 }
 
-function getStream(channel, raw) {
+function getStream(channel, OAuth,  raw) {
 	return new Promise((resolve, reject) => {
-		getAccessToken(channel, false)
+		getAccessToken(channel, OAuth, false)
 			.then((accessToken) => getPlaylist(channel, accessToken, false))
 			.then((playlist) => resolve((raw ? playlist : parsePlaylist(playlist))))
 			.catch(error => reject(error));
